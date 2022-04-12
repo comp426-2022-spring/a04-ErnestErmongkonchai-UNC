@@ -7,14 +7,10 @@ const args = require('minimist')(process.argv.slice(2))
 args['port', 'debug', 'log', 'help']
 const port = args.port || process.env.PORT || 5000
 
-// Start an app server
-const server = app.listen(port, () => {
-    console.log('App listening on port %PORT%'.replace('%PORT%', port))
-});
-
 // Help message
-if(args.help == true) {
-    console.log(`server.js [options]
+if(args.help || args.h) {
+    console.log(`
+    server.js [options]
     
     --port	Set the port number for the server to listen on. Must be an integer
                 between 1 and 65535.
@@ -27,10 +23,16 @@ if(args.help == true) {
     --log	If set to false, no log files are written. Defaults to true.
                 Logs are always written to database.
     
-    --help	Return this message and exit.`);
+    --help	Return this message and exit.
+    `);
 
     process.exit(0);
 }
+
+// Start an app server
+const server = app.listen(port, () => {
+    console.log('App listening on port %PORT%'.replace('%PORT%', port))
+});
 
 function coinFlip() {
     return (Math.random() > 0.5 ? "heads" : "tails");

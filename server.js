@@ -2,6 +2,13 @@
 const express = require('express')
 const app = express()
 
+// Require database SCRIPT file
+const db = require("./database.js")
+
+// Make Express use its own built-in body parser for both urlencoded and JSON body data.
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // Require minimist
 const args = require('minimist')(process.argv.slice(2))
 args['port', 'debug', 'log', 'help']
@@ -25,7 +32,6 @@ if(args.help || args.h) {
     
     --help	Return this message and exit.
     `);
-
     process.exit(0);
 }
 
@@ -80,6 +86,21 @@ function flipACoin(call) {
 
     return output;
 }
+// Middleware function to insert new record
+app.use( (req, res, next) => {
+    let logdata = {
+        remoteaddr: req.ip,
+        remoteuser: req.user,
+        time: Date.now(),
+        method: req.method,
+        url: req.url,
+        protocol: req.protocol,
+        httpversion: req.httpVersion,
+        status: res.statusCode,
+        referer: req.headers['referer'],
+        useragent: req.headers['user-agent']
+    }
+})
 
 app.get('/app/', (req,res) => {
     // Respond with status 200

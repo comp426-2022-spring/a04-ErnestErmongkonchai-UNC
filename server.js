@@ -21,7 +21,7 @@ const server = app.listen(port, () => {
 });
 
 // Help message
-if (args.help || args.h) {
+if (args.help == true) {
     console.log(`server.js [options]
     
     --port	Set the port number for the server to listen on. Must be an integer
@@ -40,7 +40,7 @@ if (args.help || args.h) {
     process.exit(0);
 }
 
-if (args.debug) {
+if (args.debug == true) {
     app.get("/app/log/access", (req, res) => {
         try {
             const stmt = db.prepare('SELECT * FROM accesslog').all();
@@ -56,7 +56,7 @@ if (args.debug) {
     });
 }
 
-if (args.log) {
+if (args.log == true) {
     const morgan = require('morgan');
     const accessLog = fs.createWriteStream('access.log', { flags: 'a' });
     app.use(morgan('combined', { stream: accessLog }));

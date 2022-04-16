@@ -40,12 +40,10 @@ if(args.help || args.h) {
     process.exit(0);
 }
 
-//
 if(args.debug) {
     
 }
 
-// 
 if(args.log) {
     const morgan = require('morgan');
     const accessLog = fs.createWriteStream('access.log', {flags: 'a'});
@@ -66,6 +64,10 @@ app.use( (req, res, next) => {
         referer: req.headers['referer'],
         useragent: req.headers['user-agent']
     }
+
+    const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, secure, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);')
+    const info = stmt.run(String(logdata.remoteaddr), String(logdata.remoteuser), String(logdata.time),String(logdata.method), String(logdata.url), String(logdata.protocol),String(logdata.httpversion), String(logdata.secure), String(logdata.status),String(logdata.referer), String(logdata.useragent));
+    next();
 })
 
 app.get('/app/', (req,res) => {

@@ -20,7 +20,7 @@ const server = app.listen(port, () => {
 });
 
 // Help message
-if(args.help || args.h) {
+if (args.help || args.h) {
     console.log(`
     server.js [options]
     
@@ -40,18 +40,25 @@ if(args.help || args.h) {
     process.exit(0);
 }
 
-if(args.debug) {
-    
+if (args.debug) {
+    app.get('/app/log/access', (req, res) => {
+        try {
+            const stmt = db.prepare('SELECT * FROM accesslog').all();
+            res.status(200).json(stmt);
+        } catch {
+            console.error(e);
+        }
+    })
 }
 
-if(args.log) {
+if (args.log) {
     const morgan = require('morgan');
-    const accessLog = fs.createWriteStream('access.log', {flags: 'a'});
-    app.use(morgan('combined', {stream: accessLog}));
+    const accessLog = fs.createWriteStream('access.log', { flags: 'a' });
+    app.use(morgan('combined', { stream: accessLog }));
 }
 
 // Middleware function to insert new record
-app.use( (req, res, next) => {
+app.use((req, res, next) => {
     let logdata = {
         remoteaddr: req.ip,
         remoteuser: req.user,
@@ -66,38 +73,38 @@ app.use( (req, res, next) => {
     }
 
     const stmt = db.prepare('INSERT INTO accesslog (remoteaddr, remoteuser, time, method, url, protocol, httpversion, secure, status, referer, useragent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);')
-    const info = stmt.run(String(logdata.remoteaddr), String(logdata.remoteuser), String(logdata.time),String(logdata.method), String(logdata.url), String(logdata.protocol),String(logdata.httpversion), String(logdata.secure), String(logdata.status),String(logdata.referer), String(logdata.useragent));
+    const info = stmt.run(String(logdata.remoteaddr), String(logdata.remoteuser), String(logdata.time), String(logdata.method), String(logdata.url), String(logdata.protocol), String(logdata.httpversion), String(logdata.secure), String(logdata.status), String(logdata.referer), String(logdata.useragent));
     next();
 })
 
-app.get('/app/', (req,res) => {
+app.get('/app/', (req, res) => {
     // Respond with status 200
     res.statusCode = 200;
     // Respond with status message "OK"
     res.statusMessage = 'OK';
-    res.writeHead(res.statusCode, {'Content-Type' : 'text/plain'});
+    res.writeHead(res.statusCode, { 'Content-Type': 'text/plain' });
     res.end(res.statusCode + ' ' + res.statusMessage);
 });
 
-app.get('/app/flip', (req,res) => {
-    res.status(200).json({flip: coinFlip()});
+app.get('/app/flip', (req, res) => {
+    res.status(200).json({ flip: coinFlip() });
 });
 
-app.get('/app/flips/:number', (req,res) => {
+app.get('/app/flips/:number', (req, res) => {
     let arr = coinFlips(req.params.number);
-    res.status(200).json({raw: arr, summary: countFlips(arr)});
+    res.status(200).json({ raw: arr, summary: countFlips(arr) });
 });
 
-app.get('/app/flip/call/heads', (req,res) => {
+app.get('/app/flip/call/heads', (req, res) => {
     res.status(200).json(flipACoin("heads"))
 });
 
-app.get('/app/flip/call/tails', (req,res) => {
+app.get('/app/flip/call/tails', (req, res) => {
     res.status(200).json(flipACoin("tails"))
 });
 
 // Default response for any other request
-app.use(function(req,res) {
+app.use(function (req, res) {
     res.status(404).send('404 NOT FOUND');
     //res.type("text/plain");
 });
@@ -109,14 +116,14 @@ function coinFlip() {
 function coinFlips(flips) {
     const flipResults = [];
     const output = { raw: [], summary: "" };
-  
+
     for (var i = 0; i < flips; i++) {
         flipResults.push(coinFlip());
     }
-  
+
     output.raw = flipResults;
     output.summary = countFlips(flipResults);
-  
+
     return output;
 }
 

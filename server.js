@@ -41,7 +41,7 @@ if (args.help || args.h) {
 }
 
 if (args.debug) {
-    app.get('/app/log/access', (req, res) => {
+    app.get("/app/log/access", (req, res) => {
         try {
             const stmt = db.prepare('SELECT * FROM accesslog').all();
             res.status(200).json(stmt);
@@ -52,8 +52,8 @@ if (args.debug) {
 
     app.get('/app/error', (req, res) => {
         res.status(500);
-        throw new Error('Error test completed successfully.')
-    })
+        throw new Error('Error test completed successfully.');
+    });
 }
 
 if (args.log) {
@@ -101,11 +101,11 @@ app.get('/app/flips/:number', (req, res) => {
 });
 
 app.get('/app/flip/call/heads', (req, res) => {
-    res.status(200).json(flipACoin("heads"))
+    res.status(200).json(flipACoin("heads"));
 });
 
 app.get('/app/flip/call/tails', (req, res) => {
-    res.status(200).json(flipACoin("tails"))
+    res.status(200).json(flipACoin("tails"));
 });
 
 // Default response for any other request

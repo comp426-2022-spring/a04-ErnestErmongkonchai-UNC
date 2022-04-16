@@ -13,7 +13,7 @@ app.use(express.json());
 // Require minimist
 const args = require('minimist')(process.argv.slice(2));
 args['port', 'debug', 'log', 'help'];
-const port = args.port || process.env.PORT || 5000;
+const port = args.port || process.env.PORT || 5555;
 
 // Start an app server
 const server = app.listen(port, () => {

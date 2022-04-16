@@ -1,18 +1,19 @@
 // Require Express.js
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
+const fs = require('fs');
 
 // Require database SCRIPT file
-const db = require("./database.js")
+const db = require('./database.js');
 
 // Make Express use its own built-in body parser for both urlencoded and JSON body data.
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Require minimist
-const args = require('minimist')(process.argv.slice(2))
-args['port', 'debug', 'log', 'help']
-const port = args.port || process.env.PORT || 5000
+const args = require('minimist')(process.argv.slice(2));
+args['port', 'debug', 'log', 'help'];
+const port = args.port || process.env.PORT || 5000;
 
 // Start an app server
 const server = app.listen(port, () => {
@@ -21,8 +22,7 @@ const server = app.listen(port, () => {
 
 // Help message
 if (args.help || args.h) {
-    console.log(`
-    server.js [options]
+    console.log(`server.js [options]
     
     --port	Set the port number for the server to listen on. Must be an integer
                 between 1 and 65535.
@@ -48,6 +48,11 @@ if (args.debug) {
         } catch {
             console.error(e);
         }
+    });
+
+    app.get('/app/error', (req, res) => {
+        res.status(500);
+        throw new Error('Error test completed successfully.')
     })
 }
 
@@ -106,7 +111,7 @@ app.get('/app/flip/call/tails', (req, res) => {
 // Default response for any other request
 app.use(function (req, res) {
     res.status(404).send('404 NOT FOUND');
-    //res.type("text/plain");
+    res.type("text/plain");
 });
 
 function coinFlip() {

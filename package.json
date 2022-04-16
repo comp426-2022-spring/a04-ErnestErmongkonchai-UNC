@@ -19,7 +19,9 @@
   "dependencies": {
     "better-sqlite3": "^7.5.1",
     "express": "^4.17.3",
+    "fs": "^0.0.1-security",
     "minimist": "^1.2.6",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "outdated": "^0.1.1"
   }
 }
